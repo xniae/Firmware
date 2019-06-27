@@ -145,54 +145,60 @@ void FlightTaskAutoLineSmoothVel::_prepareSetpoints()
 	_checkEkfResetCounters();
 	_want_takeoff = false;
 
-	if (PX4_ISFINITE(_position_setpoint(0)) &&
-	    PX4_ISFINITE(_position_setpoint(1))) {
-		// Use position setpoints to generate velocity setpoints
+	if (_param_mpc_yaw_mode.get() == 4 && !_yaw_sp_aligned) {
+		// Wait for the yaw setpoint to be aligned
+		_velocity_setpoint.setAll(0.f);
 
-		// Get various path specific vectors. */
-		Vector2f pos_traj;
-		pos_traj(0) = _trajectory[0].getCurrentPosition();
-		pos_traj(1) = _trajectory[1].getCurrentPosition();
-		Vector2f pos_sp_xy(_position_setpoint);
-		Vector2f pos_traj_to_dest(pos_sp_xy - pos_traj);
-		Vector2f u_prev_to_dest = Vector2f(pos_sp_xy - Vector2f(_prev_wp)).unit_or_zero();
-		Vector2f prev_to_pos(pos_traj - Vector2f(_prev_wp));
-		Vector2f closest_pt = Vector2f(_prev_wp) + u_prev_to_dest * (prev_to_pos * u_prev_to_dest);
-		Vector2f u_pos_traj_to_dest_xy(Vector2f(pos_traj_to_dest).unit_or_zero());
+	} else {
+		if (PX4_ISFINITE(_position_setpoint(0)) &&
+		    PX4_ISFINITE(_position_setpoint(1))) {
+			// Use position setpoints to generate velocity setpoints
 
-		float speed_sp_track = Vector2f(pos_traj_to_dest).length() * _param_mpc_xy_traj_p.get();
-		speed_sp_track = math::constrain(speed_sp_track, 0.0f, _mc_cruise_speed);
+			// Get various path specific vectors. */
+			Vector2f pos_traj;
+			pos_traj(0) = _trajectory[0].getCurrentPosition();
+			pos_traj(1) = _trajectory[1].getCurrentPosition();
+			Vector2f pos_sp_xy(_position_setpoint);
+			Vector2f pos_traj_to_dest(pos_sp_xy - pos_traj);
+			Vector2f u_prev_to_dest = Vector2f(pos_sp_xy - Vector2f(_prev_wp)).unit_or_zero();
+			Vector2f prev_to_pos(pos_traj - Vector2f(_prev_wp));
+			Vector2f closest_pt = Vector2f(_prev_wp) + u_prev_to_dest * (prev_to_pos * u_prev_to_dest);
+			Vector2f u_pos_traj_to_dest_xy(Vector2f(pos_traj_to_dest).unit_or_zero());
 
-		Vector2f vel_sp_xy = u_pos_traj_to_dest_xy * speed_sp_track;
+			float speed_sp_track = Vector2f(pos_traj_to_dest).length() * _param_mpc_xy_traj_p.get();
+			speed_sp_track = math::constrain(speed_sp_track, 0.0f, _mc_cruise_speed);
 
-		for (int i = 0; i < 2; i++) {
-			// If available, constrain the velocity using _velocity_setpoint(.)
-			if (PX4_ISFINITE(_velocity_setpoint(i))) {
-				_velocity_setpoint(i) = _constrainOneSide(vel_sp_xy(i), _velocity_setpoint(i));
+			Vector2f vel_sp_xy = u_pos_traj_to_dest_xy * speed_sp_track;
 
-			} else {
-				_velocity_setpoint(i) = vel_sp_xy(i);
+			for (int i = 0; i < 2; i++) {
+				// If available, constrain the velocity using _velocity_setpoint(.)
+				if (PX4_ISFINITE(_velocity_setpoint(i))) {
+					_velocity_setpoint(i) = _constrainOneSide(vel_sp_xy(i), _velocity_setpoint(i));
+
+				} else {
+					_velocity_setpoint(i) = vel_sp_xy(i);
+				}
+
+				_velocity_setpoint(i) += (closest_pt(i) - _trajectory[i].getCurrentPosition()) *
+							 _param_mpc_xy_traj_p.get();  // Along-track setpoint + cross-track P controller
 			}
 
-			_velocity_setpoint(i) += (closest_pt(i) - _trajectory[i].getCurrentPosition()) *
-						 _param_mpc_xy_traj_p.get();  // Along-track setpoint + cross-track P controller
 		}
 
-	}
+		if (PX4_ISFINITE(_position_setpoint(2))) {
+			const float vel_sp_z = (_position_setpoint(2) - _trajectory[2].getCurrentPosition()) *
+					       _param_mpc_z_traj_p.get(); // Generate a velocity target for the trajectory using a simple P loop
 
-	if (PX4_ISFINITE(_position_setpoint(2))) {
-		const float vel_sp_z = (_position_setpoint(2) - _trajectory[2].getCurrentPosition()) *
-				       _param_mpc_z_traj_p.get(); // Generate a velocity target for the trajectory using a simple P loop
+			// If available, constrain the velocity using _velocity_setpoint(.)
+			if (PX4_ISFINITE(_velocity_setpoint(2))) {
+				_velocity_setpoint(2) = _constrainOneSide(vel_sp_z, _velocity_setpoint(2));
 
-		// If available, constrain the velocity using _velocity_setpoint(.)
-		if (PX4_ISFINITE(_velocity_setpoint(2))) {
-			_velocity_setpoint(2) = _constrainOneSide(vel_sp_z, _velocity_setpoint(2));
+			} else {
+				_velocity_setpoint(2) = vel_sp_z;
+			}
 
-		} else {
-			_velocity_setpoint(2) = vel_sp_z;
+			_want_takeoff = _velocity_setpoint(2) < -0.3f;
 		}
-
-		_want_takeoff = _velocity_setpoint(2) < -0.3f;
 	}
 }
 

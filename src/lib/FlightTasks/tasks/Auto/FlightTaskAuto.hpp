@@ -101,10 +101,10 @@ protected:
 	uORB::SubscriptionPollable<home_position_s> *_sub_home_position{nullptr};
 
 	State _current_state{State::none};
-	float _target_acceptance_radius = 0.0f; /**< Acceptances radius of the target */
-	int _mission_gear = landing_gear_s::GEAR_KEEP;
+	float _target_acceptance_radius{0.0f}; /**< Acceptances radius of the target */
+	int _mission_gear{landing_gear_s::GEAR_KEEP};
 
-	float _yaw_sp_prev = NAN;
+	float _yaw_sp_prev{NAN};
 	bool _yaw_sp_aligned{false};
 
 	ObstacleAvoidance _obstacle_avoidance; /**< class adjusting setpoints according to external avoidance module's input */
@@ -121,7 +121,7 @@ protected:
 
 private:
 	matrix::Vector2f _lock_position_xy{NAN, NAN}; /**< if no valid triplet is received, lock positition to current position */
-	bool _yaw_lock = false; /**< if within acceptance radius, lock yaw to current yaw */
+	bool _yaw_lock{false}; /**< if within acceptance radius, lock yaw to current yaw */
 	uORB::SubscriptionPollable<position_setpoint_triplet_s> *_sub_triplet_setpoint{nullptr};
 	uORB::SubscriptionPollable<vehicle_status_s> *_sub_vehicle_status{nullptr};
 
@@ -134,11 +134,10 @@ private:
 	matrix::Vector2f _closest_pt; /**< closest point to the vehicle position on the line previous - target */
 
 	map_projection_reference_s _reference_position{}; /**< Structure used to project lat/lon setpoint into local frame. */
-	float _reference_altitude = NAN;  /**< Altitude relative to ground. */
-	hrt_abstime _time_stamp_reference = 0; /**< time stamp when last reference update occured. */
+	float _reference_altitude{NAN};  /**< Altitude relative to ground. */
+	hrt_abstime _time_stamp_reference{0}; /**< time stamp when last reference update occured. */
 
-	WeatherVane *_ext_yaw_handler =
-		nullptr;	/**< external weathervane library, used to implement a yaw control law that turns the vehicle nose into the wind */
+	WeatherVane *_ext_yaw_handler{nullptr};	/**< external weathervane library, used to implement a yaw control law that turns the vehicle nose into the wind */
 
 
 	void _limitYawRate(); /**< Limits the rate of change of the yaw setpoint. */

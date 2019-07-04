@@ -1,0 +1,15 @@
+Mixer for Tailsitter with x motor configuration and elevons
+PX4 Fork for Transwing Quad Tailsitter by NUAA Team
+
+# @author Qichang Chen     <bluecat1997@sina.cn>
+===========================================================
+
+This file defines a single mixer for tailsitter to trans it's wing when VTOL_STATE changed.
+
+# left trans servo (Connect to AUX1 port)
+M: 1
+S: 1 4 -5000 -5000      0 -10000  10000
+
+# right trans servo (Connect to AUX2 port)
+M: 1
+S: 1 4  -5000  -5000    0 -10000  10000

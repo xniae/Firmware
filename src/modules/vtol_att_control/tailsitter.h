@@ -36,6 +36,7 @@
 *
 * @author Roman Bapst 		<bapstroman@gmail.com>
 * @author David Vorsin     <davidvorsin@gmail.com>
+* @author Qichang Chen     <bluecat1997@sina.cn>
 *
 */
 
@@ -88,6 +89,8 @@ private:
 	matrix::Quatf _q_trans_start;
 	matrix::Quatf _q_trans_sp;
 	matrix::Vector3f _trans_rot_axis;
+
+	float _Trans_servo_control{0.0f};		/**< actuator value for the Trans servo for NUAA Transwing */
 
 	void parameters_update() override;
 

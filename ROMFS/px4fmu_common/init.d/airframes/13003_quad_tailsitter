@@ -5,7 +5,19 @@
 # @type VTOL Quad Tailsitter
 # @class VTOL
 #
+# @output MAIN1 motor 1
+# @output MAIN2 motor 2
+# @output MAIN3 motor 4
+# @output MAIN4 motor 5
+# @output MAIN5 elevon left
+# @output MAIN6 elevon right
+# @output MAIN7 canard surface
+# @output MAIN8 rudder
+# @output AUX1 left trans servo
+# @output AUX2 right trans servo
+#
 # @maintainer Roman Bapst <roman@px4.io>
+# @author Qichang Chen     <bluecat1997@sina.cn>
 #
 
 sh /etc/init.d/rc.vtol_defaults
@@ -27,5 +39,6 @@ fi
 set MAV_TYPE 20
 
 set MIXER quad_x_vtol
+set MIXER_AUX quad_x_vtol   #for NUAA Transwing
 
 set PWM_OUT 1234

@@ -17,7 +17,7 @@
 # @output AUX2 right trans servo
 #
 # @maintainer Roman Bapst <roman@px4.io>
-# @author Qichang Chen     <bluecat1997@sina.cn>
+# @editer Qichang Chen     <bluecat1997@sina.cn>
 #
 
 sh /etc/init.d/rc.vtol_defaults

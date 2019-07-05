@@ -67,11 +67,19 @@ private:
 	struct {
 		float front_trans_dur_p2;
 		float fw_pitch_sp_offset;
+		float transervo_mc;
+		float transervo_transition;
+		float transervo_fw;
+		float transervo_during;
 	} _params_tailsitter{};
 
 	struct {
 		param_t front_trans_dur_p2;
 		param_t fw_pitch_sp_offset;
+		param_t transervo_mc;
+		param_t transervo_transition;
+		param_t transervo_fw;
+		param_t transervo_during;
 	} _params_handles_tailsitter{};
 
 	enum vtol_mode {
@@ -84,13 +92,14 @@ private:
 	struct {
 		vtol_mode flight_mode;			/**< vtol flight mode, defined by enum vtol_mode */
 		hrt_abstime transition_start;	/**< absoulte time at which front transition started */
+		hrt_abstime fw_start;	/**< absoulte time at which trans into fw */
 	} _vtol_schedule;
 
 	matrix::Quatf _q_trans_start;
 	matrix::Quatf _q_trans_sp;
 	matrix::Vector3f _trans_rot_axis;
 
-	float _Trans_servo_control{0.0f};		/**< actuator value for the Trans servo for NUAA Transwing */
+	float _transervo_control{0.0f};		/**< actuator value for the Trans servo for NUAA Transwing */
 
 	void parameters_update() override;
 

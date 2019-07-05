@@ -37,6 +37,7 @@
  *
  * @author Roman Bapst <bapstroman@gmail.com>
  * @author David Vorsin     <davidvorsin@gmail.com>
+ * editor  Qichang Chen     <bluecat1997@sina.cn>
  */
 
 /**
@@ -53,3 +54,53 @@
  * @group VTOL Attitude Control
 
 PARAM_DEFINE_FLOAT(VT_TRANS_P2_DUR, 0.5f);*/
+
+/**
+ * Position of wing transition servo in mc mode	(DEV FOR NUAA TRANSWING)
+ *
+ * It mast smaller than VT_TAIL_TRANSERVO_FW near 0.0f
+ *
+ * @min 0.0
+ * @max 1.0
+ * @increment 0.01
+ * @decimal 3
+ * @group VTOL Attitude Control
+ */
+PARAM_DEFINE_FLOAT(VT_TAIL_TRANSERVO_MC, 0.0f);
+
+/**
+ * Position of wing transition servo in fw mode	(DEV FOR NUAA TRANSWING)
+ *
+ * It mast bigger than VT_TAIL_TRANSERVO_MC near 1.0f
+ *
+ * @min 0.0
+ * @max 1.0
+ * @increment 0.01
+ * @decimal 3
+ * @group VTOL Attitude Control
+ */
+PARAM_DEFINE_FLOAT(VT_TAIL_TRANSERVO_FW, 1.0f);
+
+/**
+ * Position of wing transition servo in transition mode	(DEV FOR NUAA TRANSWING)
+ *
+ * @min 0.0
+ * @max 1.0
+ * @increment 0.01
+ * @decimal 3
+ * @group VTOL Attitude Control
+ */
+PARAM_DEFINE_FLOAT(VT_TAIL_TRANSERVO_TRANS, 0.0f);
+
+/**
+ * Duration of wing transition servo deploy	(DEV FOR NUAA TRANSWING)
+ *
+ * Time in seconds it should take for the wing transition servo to rotate completely.
+ *
+ * @min 0.0
+ * @max 5.0
+ * @increment 0.01
+ * @decimal 3
+ * @group VTOL Attitude Control
+ */
+PARAM_DEFINE_FLOAT(VT_TAIL_TRANSERVO_DUR, 2.0f);

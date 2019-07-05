@@ -8,8 +8,8 @@ This file defines a single mixer for tailsitter to trans it's wing when VTOL_STA
 
 # left trans servo (Connect to AUX1 port)
 M: 1
-S: 1 4 -5000 -5000      0 -10000  10000
+S: 1 4  10000  10000    0 -10000  10000
 
 # right trans servo (Connect to AUX2 port)
 M: 1
-S: 1 4  -5000  -5000    0 -10000  10000
+S: 1 4 -10000 -10000    0 -10000  10000

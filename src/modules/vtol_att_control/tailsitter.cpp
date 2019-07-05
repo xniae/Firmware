@@ -63,6 +63,10 @@ Tailsitter::Tailsitter(VtolAttitudeControl *attc) :
 
 	_params_handles_tailsitter.front_trans_dur_p2 = param_find("VT_TRANS_P2_DUR");
 	_params_handles_tailsitter.fw_pitch_sp_offset = param_find("FW_PSP_OFF");
+	_params_handles_tailsitter.transervo_mc = param_find("VT_TAIL_TRANSERVO_MC");
+	_params_handles_tailsitter.transervo_transition = param_find("VT_TAIL_TRANSERVO_TRANS");
+	_params_handles_tailsitter.transervo_fw = param_find("VT_TAIL_TRANSERVO_FW");
+	_params_handles_tailsitter.transervo_during = param_find("VT_TAIL_TRANSERVO_DUR");
 }
 
 void
@@ -76,6 +80,15 @@ Tailsitter::parameters_update()
 
 	param_get(_params_handles_tailsitter.fw_pitch_sp_offset, &v);
 	_params_tailsitter.fw_pitch_sp_offset = math::radians(v);
+
+	param_get(_params_handles_tailsitter.transervo_mc, &v);
+	_params_tailsitter.transervo_mc = v;
+
+	param_get(_params_handles_tailsitter.transervo_transition, &v);
+	_params_tailsitter.transervo_transition = v;
+
+	param_get(_params_handles_tailsitter.transervo_fw, &v);
+	_params_tailsitter.transervo_fw = v;
 }
 
 void Tailsitter::update_vtol_state()
@@ -108,8 +121,8 @@ void Tailsitter::update_vtol_state()
 		case TRANSITION_BACK:
 			float time_since_trans_start = (float)(hrt_absolute_time() - _vtol_schedule.transition_start) * 1e-6f;
 
-			// check if we have reached pitch angle to switch to MC mode
-			if (pitch >= PITCH_TRANSITION_BACK || time_since_trans_start > _params->back_trans_duration) {
+			// check if we have reached pitch angle to switch to MC mode ,and transwing trans servo is in position
+			if ((pitch >= PITCH_TRANSITION_BACK || time_since_trans_start > _params->back_trans_duration) && _transervo_control <= _params_tailsitter.transervo_mc) {
 				_vtol_schedule.flight_mode = MC_MODE;
 			}
 
@@ -136,6 +149,7 @@ void Tailsitter::update_vtol_state()
 				// check if we have reached airspeed  and pitch angle to switch to TRANSITION P2 mode
 				if ((airspeed_condition_satisfied && pitch <= PITCH_TRANSITION_FRONT_P1) || can_transition_on_ground()) {
 					_vtol_schedule.flight_mode = FW_MODE;
+					_vtol_schedule.fw_start = hrt_absolute_time();
 				}
 
 				break;
@@ -144,6 +158,8 @@ void Tailsitter::update_vtol_state()
 		case TRANSITION_BACK:
 			// failsafe into fixed wing mode
 			_vtol_schedule.flight_mode = FW_MODE;
+			_vtol_schedule.fw_start = (float)(hrt_absolute_time() - fabsf(_transervo_control-_params_tailsitter.transervo_mc) /
+				_params_tailsitter.transervo_during * 1e6f;	//transwing servo back to fw mode from aborting position
 			break;
 		}
 	}
@@ -221,10 +237,14 @@ void Tailsitter::update_transition_state()
 						       time_since_trans_start * trans_pitch_rate)) * _q_trans_start;
 		}
 
+		// make sure trans servos are in position
+		_transervo_control=_params_tailsitter.transervo_mc;
+
 	} else if (_vtol_schedule.flight_mode == TRANSITION_BACK) {
 
 		const float trans_pitch_rate = M_PI_2_F / _params->back_trans_duration;
 
+		//POWER IDEL WHILE BACK TRANSITION  !!!
 		if (!flag_idle_mc) {
 			flag_idle_mc = set_idle_mc();
 		}
@@ -232,6 +252,15 @@ void Tailsitter::update_transition_state()
 		if (tilt > 0.01f) {
 			_q_trans_sp = Quatf(AxisAnglef(_trans_rot_axis,
 						       time_since_trans_start * trans_pitch_rate)) * _q_trans_start;
+		}
+
+		// Transwing trans to mc shape
+		if (_transervo_control > _params_tailsitter.transervo_mc) {
+			_transervo_control = _params_tailsitter.transervo_fw -
+					fabsf(_params_tailsitter.transervo_fw - _params_tailsitter.transervo_mc) * time_since_trans_start /
+					_params_tailsitter.transervo_during;
+		}else{
+			_transervo_control = _params_tailsitter.transervo_mc;
 		}
 	}
 
@@ -260,13 +289,26 @@ void Tailsitter::waiting_on_tecs()
 
 void Tailsitter::update_fw_state()
 {
+	float time_since_fw_start = (float)(hrt_absolute_time() - _vtol_schedule.fw_start) * 1e-6f;
+
 	VtolType::update_fw_state();
 
-	// allow fw yawrate control via multirotor roll actuation. this is useful for vehicles
-	// which don't have a rudder to coordinate turns
-	if (_params->diff_thrust == 1) {
-		_mc_roll_weight = 1.0f;
-	}
+	// Transwing trans to fw shape
+	if (_transervo_control < _params_tailsitter.transervo_fw) {
+			_transervo_control = _params_tailsitter.transervo_mc +
+					fabsf(_params_tailsitter.transervo_fw - _params_tailsitter.transervo_mc) * time_since_fw_start /
+					_params_tailsitter.transervo_during;
+		}else{
+			_transervo_control = _params_tailsitter.transervo_fw;
+		}
+}
+
+void Tailsitter::update_mc_state()
+{
+	VtolType::update_mc_state();
+
+	// make sure trans servos are in position
+	_transervo_control=_params_tailsitter.transervo_mc;
 }
 
 /**
@@ -291,9 +333,17 @@ void Tailsitter::fill_actuator_outputs()
 		_actuators_out_0->control[actuator_controls_s::INDEX_THROTTLE] =
 			_actuators_fw_in->control[actuator_controls_s::INDEX_THROTTLE];
 
+		/* allow differential thrust if enabled */
+		if (_params->diff_thrust == 1) {
+			_actuators_out_0->control[actuator_controls_s::INDEX_ROLL] =
+				_actuators_fw_in->control[actuator_controls_s::INDEX_YAW] * _params->diff_thrust_scale;
+		}
 	} else {
 		_actuators_out_0->control[actuator_controls_s::INDEX_THROTTLE] =
 			_actuators_mc_in->control[actuator_controls_s::INDEX_THROTTLE];
+
+		_actuators_out_0->control[actuator_controls_s::INDEX_ROLL] =
+				 _actuators_mc_in->control[actuator_controls_s::INDEX_ROLL] * _mc_roll_weight;
 	}
 
 	if (_params->elevons_mc_lock && _vtol_schedule.flight_mode == MC_MODE) {
@@ -306,4 +356,6 @@ void Tailsitter::fill_actuator_outputs()
 		_actuators_out_1->control[actuator_controls_s::INDEX_PITCH] =
 			_actuators_fw_in->control[actuator_controls_s::INDEX_PITCH];
 	}
+
+	_actuators_out_1->control[4] = _transervo_control;	//transwing trans servo is in Control Group #1 of Index #4
 }

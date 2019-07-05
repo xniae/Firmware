@@ -63,10 +63,10 @@ Tailsitter::Tailsitter(VtolAttitudeControl *attc) :
 
 	_params_handles_tailsitter.front_trans_dur_p2 = param_find("VT_TRANS_P2_DUR");
 	_params_handles_tailsitter.fw_pitch_sp_offset = param_find("FW_PSP_OFF");
-	_params_handles_tailsitter.transervo_mc = param_find("VT_TAIL_TRANSERVO_MC");
-	_params_handles_tailsitter.transervo_transition = param_find("VT_TAIL_TRANSERVO_TRANS");
-	_params_handles_tailsitter.transervo_fw = param_find("VT_TAIL_TRANSERVO_FW");
-	_params_handles_tailsitter.transervo_during = param_find("VT_TAIL_TRANSERVO_DUR");
+	_params_handles_tailsitter.transervo_mc = param_find("VT_TRANSERVO_MC");
+	_params_handles_tailsitter.transervo_transition = param_find("VT_TRANSERVO_T");
+	_params_handles_tailsitter.transervo_fw = param_find("VT_TRANSERVO_FW");
+	_params_handles_tailsitter.transervo_during = param_find("VT_TRANSERVO_DUR");
 }
 
 void

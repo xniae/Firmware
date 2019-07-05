@@ -158,7 +158,7 @@ void Tailsitter::update_vtol_state()
 		case TRANSITION_BACK:
 			// failsafe into fixed wing mode
 			_vtol_schedule.flight_mode = FW_MODE;
-			_vtol_schedule.fw_start = (float)(hrt_absolute_time() - fabsf(_transervo_control-_params_tailsitter.transervo_mc) /
+			_vtol_schedule.fw_start = (float)hrt_absolute_time() - fabsf(_transervo_control-_params_tailsitter.transervo_mc) /
 				_params_tailsitter.transervo_during * 1e6f;	//transwing servo back to fw mode from aborting position
 			break;
 		}

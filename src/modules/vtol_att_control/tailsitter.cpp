@@ -114,6 +114,13 @@ void Tailsitter::update_vtol_state()
 		case FW_MODE:
 			_vtol_schedule.flight_mode 	= TRANSITION_BACK;
 			_vtol_schedule.transition_start = hrt_absolute_time();
+
+			//mark if transwing servo is in position in FW mode
+			if(_transervo_control < _params_tailsitter.transervo_fw){
+				_transervo_control_front_inpos = 0;
+			}else{
+				_transervo_control_front_inpos = 1;
+			}
 			break;
 
 		case TRANSITION_FRONT_P1:
@@ -259,14 +266,27 @@ void Tailsitter::update_transition_state()
 						       time_since_trans_start * trans_pitch_rate)) * _q_trans_start;
 		}
 
-		// Transwing trans to mc shape
-		if (_transervo_control > _params_tailsitter.transervo_mc) {
-			_transervo_control = _params_tailsitter.transervo_fw -
+		// Transwing trans to mc shape smoothly from fw if front trans finshed or not
+		if (_transervo_control_front_inpos){
+			if (_transervo_control > _params_tailsitter.transervo_mc) {
+				_transervo_control = _params_tailsitter.transervo_fw -
 					fabsf(_params_tailsitter.transervo_fw - _params_tailsitter.transervo_mc) * time_since_trans_start /
 					_params_tailsitter.transervo_during;
-		}/* else{
-			_transervo_control = _params_tailsitter.transervo_mc;
-		}*/
+			}
+		}else{
+			float time_since_fw_start = (float)(hrt_absolute_time() - _vtol_schedule.fw_start) * 1e-6f;
+			float abstime_transstart_est_back = (float)hrt_absolute_time() - fabsf(_params_tailsitter.transervo_during -
+				time_since_fw_start) * 1e6f;
+			float time_since_transstart_est = (float)(hrt_absolute_time() - abstime_transstart_est_back) * 1e-6f;
+
+			if(_transervo_control > _params_tailsitter.transervo_mc){
+				_transervo_control = _params_tailsitter.transervo_fw -
+					fabsf(_params_tailsitter.transervo_fw - _params_tailsitter.transervo_mc) * time_since_transstart_est /
+					_params_tailsitter.transervo_during;
+			}else{
+				_transervo_control_front_inpos = 1;
+			}
+		}
 	}
 
 	_v_att_sp->thrust_body[2] = _mc_virtual_att_sp->thrust_body[2];

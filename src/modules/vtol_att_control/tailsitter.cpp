@@ -170,8 +170,20 @@ void Tailsitter::update_vtol_state()
 			_vtol_schedule.flight_mode = FW_MODE;
 
 			//transwing servo back to fw mode from aborting position
-			_vtol_schedule.fw_start = (float)hrt_absolute_time() - fabsf(_transervo_control-_params_tailsitter.transervo_mc) /
-				_params_tailsitter.transervo_during * 1e6f;
+			float time_since_trans_start = (float)(hrt_absolute_time() - _vtol_schedule.transition_start) * 1e-6f;
+			if(time_since_trans_start <= _params_tailsitter.transervo_during){
+				_vtol_schedule.fw_start = (float)hrt_absolute_time() - fabsf(_params_tailsitter.transervo_during -
+					time_since_trans_start) * 1e6f;
+			}else{
+				_vtol_schedule.fw_start = (float)hrt_absolute_time();
+			}
+
+			/* _vtol_schedule.fw_start = (float)hrt_absolute_time() - fabsf(_transervo_control-_params_tailsitter.transervo_mc) /
+				_params_tailsitter.transervo_during * 1e6f;*/
+			/*float time_since_fw_start = (float)(hrt_absolute_time() - _vtol_schedule.fw_start) * 1e-6f;
+			float abstime_transstart_est_back = (float)hrt_absolute_time() - fabsf(_params_tailsitter.transervo_during -
+				time_since_fw_start) * 1e6f;
+			float time_since_transstart_est = (float)(hrt_absolute_time() - abstime_transstart_est_back) * 1e-6f; */
 			break;
 		}
 	}
@@ -323,9 +335,9 @@ void Tailsitter::update_fw_state()
 			_transervo_control = _params_tailsitter.transervo_mc +
 					fabsf(_params_tailsitter.transervo_fw - _params_tailsitter.transervo_mc) * time_since_fw_start /
 					_params_tailsitter.transervo_during;
-		}/* else{
+		} else{
 			_transervo_control = _params_tailsitter.transervo_fw;
-		}*/
+		}
 }
 
 void Tailsitter::update_mc_state()

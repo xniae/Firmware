@@ -34,6 +34,12 @@ then
 
 	# Indicate that FW roll direction was fixed in mixer, to be removed in v1.10
 	param set V19_VT_ROLLDIR 0
+
+
+	param set PWM_AUX_MIN1 900
+	param set PWM_AUX_MAX1 2100
+	param set PWM_AUX_MIN2 900
+	param set PWM_AUX_MAX2 2100
 fi
 
 set MAV_TYPE 20

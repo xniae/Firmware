@@ -60,22 +60,22 @@ PARAM_DEFINE_FLOAT(VT_TRANS_P2_DUR, 0.5f);*/
  *
  * It mast smaller than VT_TAIL_TRANSERVO_FW near 0.0f
  *
- * @min 0.0
+ * @min -1.0
  * @max 1.0
- * @increment 0.01
+ * @increment 0.001
  * @decimal 3
  * @group VTOL Attitude Control
  */
-PARAM_DEFINE_FLOAT(VT_TRANSERVO_MC, 0.0f);
+PARAM_DEFINE_FLOAT(VT_TRANSERVO_MC, -1.0f);
 
 /**
  * Position of wing transition servo in fw mode	(DEV FOR NUAA TRANSWING)
  *
  * It mast bigger than VT_TAIL_TRANSERVO_MC near 1.0f
  *
- * @min 0.0
+ * @min -1.0
  * @max 1.0
- * @increment 0.01
+ * @increment 0.001
  * @decimal 3
  * @group VTOL Attitude Control
  */
@@ -84,13 +84,13 @@ PARAM_DEFINE_FLOAT(VT_TRANSERVO_FW, 1.0f);
 /**
  * Position of wing transition servo in transition mode	(DEV FOR NUAA TRANSWING)
  *
- * @min 0.0
+ * @min -1.0
  * @max 1.0
- * @increment 0.01
+ * @increment 0.001
  * @decimal 3
  * @group VTOL Attitude Control
  */
-PARAM_DEFINE_FLOAT(VT_TRANSERVO_T, 0.0f);
+PARAM_DEFINE_FLOAT(VT_TRANSERVO_T, -1.0f);
 
 /**
  * Duration of wing transition servo deploy	(DEV FOR NUAA TRANSWING)

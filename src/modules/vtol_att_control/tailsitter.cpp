@@ -89,6 +89,9 @@ Tailsitter::parameters_update()
 
 	param_get(_params_handles_tailsitter.transervo_fw, &v);
 	_params_tailsitter.transervo_fw = v;
+
+	param_get(_params_handles_tailsitter.transervo_during, &v);
+	_params_tailsitter.transervo_during = v;
 }
 
 void Tailsitter::update_vtol_state()
@@ -158,8 +161,10 @@ void Tailsitter::update_vtol_state()
 		case TRANSITION_BACK:
 			// failsafe into fixed wing mode
 			_vtol_schedule.flight_mode = FW_MODE;
+
+			//transwing servo back to fw mode from aborting position
 			_vtol_schedule.fw_start = (float)hrt_absolute_time() - fabsf(_transervo_control-_params_tailsitter.transervo_mc) /
-				_params_tailsitter.transervo_during * 1e6f;	//transwing servo back to fw mode from aborting position
+				_params_tailsitter.transervo_during * 1e6f;
 			break;
 		}
 	}
@@ -259,9 +264,9 @@ void Tailsitter::update_transition_state()
 			_transervo_control = _params_tailsitter.transervo_fw -
 					fabsf(_params_tailsitter.transervo_fw - _params_tailsitter.transervo_mc) * time_since_trans_start /
 					_params_tailsitter.transervo_during;
-		}else{
+		}/* else{
 			_transervo_control = _params_tailsitter.transervo_mc;
-		}
+		}*/
 	}
 
 	_v_att_sp->thrust_body[2] = _mc_virtual_att_sp->thrust_body[2];
@@ -298,9 +303,9 @@ void Tailsitter::update_fw_state()
 			_transervo_control = _params_tailsitter.transervo_mc +
 					fabsf(_params_tailsitter.transervo_fw - _params_tailsitter.transervo_mc) * time_since_fw_start /
 					_params_tailsitter.transervo_during;
-		}else{
+		}/* else{
 			_transervo_control = _params_tailsitter.transervo_fw;
-		}
+		}*/
 }
 
 void Tailsitter::update_mc_state()

@@ -177,13 +177,6 @@ void Tailsitter::update_vtol_state()
 			}else{
 				_vtol_schedule.fw_start = (float)hrt_absolute_time();
 			}
-
-			/* _vtol_schedule.fw_start = (float)hrt_absolute_time() - fabsf(_transervo_control-_params_tailsitter.transervo_mc) /
-				_params_tailsitter.transervo_during * 1e6f;*/
-			/*float time_since_fw_start = (float)(hrt_absolute_time() - _vtol_schedule.fw_start) * 1e-6f;
-			float abstime_transstart_est_back = (float)hrt_absolute_time() - fabsf(_params_tailsitter.transervo_during -
-				time_since_fw_start) * 1e6f;
-			float time_since_transstart_est = (float)(hrt_absolute_time() - abstime_transstart_est_back) * 1e-6f; */
 			break;
 		}
 	}
@@ -284,7 +277,6 @@ void Tailsitter::update_transition_state()
 				_transervo_control = _params_tailsitter.transervo_fw -
 					fabsf(_params_tailsitter.transervo_fw - _params_tailsitter.transervo_mc) * time_since_trans_start /
 					_params_tailsitter.transervo_during;
-				_actuators_out_1->control[5] = 1; //debug
 			}
 		}else{
 			float time_since_fw_start = (float)(_vtol_schedule.transition_start - _vtol_schedule.fw_start) * 1e-6f;
@@ -296,7 +288,6 @@ void Tailsitter::update_transition_state()
 				_transervo_control = _params_tailsitter.transervo_fw -
 					fabsf(_params_tailsitter.transervo_fw - _params_tailsitter.transervo_mc) * time_since_transstart_est /
 					_params_tailsitter.transervo_during;
-				_actuators_out_1->control[5] = -1; //debug
 			}else{
 				_transervo_control_front_inpos = 1;
 			}

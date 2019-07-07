@@ -13,3 +13,7 @@ S: 1 4  10000  10000    0 -10000  10000
 # right trans servo (Connect to AUX2 port)
 M: 1
 S: 1 4 -10000 -10000    0 -10000  10000
+
+#tast mark (Connect to AUX3 port)
+M: 1
+S: 1 5 10000 10000    0 -10000  10000

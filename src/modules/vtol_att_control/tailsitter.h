@@ -101,7 +101,7 @@ private:
 	matrix::Vector3f _trans_rot_axis;
 
 	float _transervo_control{0.0f};		/**< actuator value for the Trans servo for NUAA Transwing */
-	bool _transervo_control_front_inpos{0};
+	int _transervo_control_front_inpos;
 
 	void parameters_update() override;
 

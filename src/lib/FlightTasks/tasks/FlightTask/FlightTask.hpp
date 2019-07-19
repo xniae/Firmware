@@ -76,10 +76,9 @@ public:
 
 	/**
 	 * Call once on the event where you switch to the task
-	 * @param state of the previous task
 	 * @return true on success, false on error
 	 */
-	virtual bool activate(vehicle_local_position_setpoint_s last_setpoint);
+	virtual bool activate();
 
 	/**
 	 * Call this to reset an active Flight Task

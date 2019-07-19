@@ -33,19 +33,22 @@
 
 #pragma once
 
-#include <cstring>
-
-#include <drivers/device/Device.hpp>
-#include <drivers/device/i2c.h>
-#include <drivers/device/spi.h>
-#include <drivers/drv_baro.h>
 #include <lib/cdev/CDev.hpp>
-#include <perf/perf_counter.h>
-#include <px4_getopt.h>
+#include <drivers/device/Device.hpp>
+#include <px4_config.h>
 #include <px4_work_queue/ScheduledWorkItem.hpp>
+
+#include <perf/perf_counter.h>
+
+#include <drivers/drv_baro.h>
+#include <drivers/drv_hrt.h>
+#include <drivers/device/ringbuffer.h>
+#include <drivers/drv_device.h>
 #include <systemlib/err.h>
+
 #include <uORB/uORB.h>
 
+#include <float.h>
 
 static constexpr uint8_t WHO_AM_I = 0x0F;
 static constexpr uint8_t LPS22HB_ID_WHO_AM_I = 0xB1;

@@ -15,3 +15,4 @@ param set SYS_AUTOSTART 4070
 
 set DATAMAN_OPT -i
 set LOGGER_ARGS "-m mavlink"
+set MIXER_AUX none

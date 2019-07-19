@@ -41,7 +41,10 @@
  * @author David sidrane
  */
 
+#include <px4_config.h>
 #include <drivers/device/spi.h>
+#include <drivers/drv_device.h>
+
 #include "mpu9250.h"
 
 #define DIR_READ			0x80

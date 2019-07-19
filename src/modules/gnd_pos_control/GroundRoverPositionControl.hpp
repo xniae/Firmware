@@ -63,21 +63,19 @@
 #include <uORB/topics/vehicle_attitude_setpoint.h>
 #include <uORB/topics/vehicle_control_mode.h>
 #include <uORB/topics/vehicle_global_position.h>
-#include <uORB/topics/actuator_controls.h>
-#include <uORB/topics/ekf2_timestamps.h>
 #include <uORB/uORB.h>
 
 using matrix::Dcmf;
 
 using uORB::SubscriptionData;
 
-class RoverPositionControl
+class GroundRoverPositionControl
 {
 public:
-	RoverPositionControl();
-	~RoverPositionControl();
-	RoverPositionControl(const RoverPositionControl &) = delete;
-	RoverPositionControl operator=(const RoverPositionControl &other) = delete;
+	GroundRoverPositionControl();
+	~GroundRoverPositionControl();
+	GroundRoverPositionControl(const GroundRoverPositionControl &) = delete;
+	GroundRoverPositionControl operator=(const GroundRoverPositionControl &other) = delete;
 
 	/**
 	 * Start the sensors task.
@@ -94,8 +92,8 @@ public:
 	bool		task_running() { return _task_running; }
 
 private:
+	orb_advert_t	_attitude_sp_pub{nullptr};		/**< attitude setpoint */
 	orb_advert_t	_pos_ctrl_status_pub{nullptr};		/**< navigation capabilities publication */
-	orb_advert_t    _actuator_controls_pub{nullptr};	/**< actuator controls publication */
 
 	bool		_task_should_exit{false};		/**< if true, sensor task should exit */
 	bool		_task_running{false};			/**< if true, task is running in its mainloop */
@@ -105,15 +103,14 @@ private:
 	int		_manual_control_sub{-1};		/**< notification of manual control updates */
 	int		_params_sub{-1};			/**< notification of parameter updates */
 	int		_pos_sp_triplet_sub{-1};
-	int     _vehicle_attitude_sub{-1};
 
-	manual_control_setpoint_s		_manual{};			    /**< r/c channel data */
+	manual_control_setpoint_s		_manual{};			/**< r/c channel data */
 	position_setpoint_triplet_s		_pos_sp_triplet{};		/**< triplet of mission items */
-	vehicle_control_mode_s			_control_mode{};		/**< control mode */
+	vehicle_attitude_setpoint_s		_att_sp{};			/**< vehicle attitude setpoint */
+	vehicle_control_mode_s			_control_mode{};			/**< control mode */
 	vehicle_global_position_s		_global_pos{};			/**< global vehicle position */
-	actuator_controls_s			    _act_controls{};		/**< direct control of actuators */
-	vehicle_attitude_s              _vehicle_att{};
 
+	SubscriptionData<vehicle_attitude_s>	_sub_attitude;
 	SubscriptionData<sensor_bias_s>	_sub_sensors;
 
 	perf_counter_t	_loop_perf;			/**< loop performance counter */
@@ -128,8 +125,6 @@ private:
 	uint8_t _pos_reset_counter{0};		// captures the number of times the estimator has reset the horizontal position
 
 	ECL_L1_Pos_Controller				_gnd_control;
-
-	bool _waypoint_reached{false};
 
 	enum UGV_POSCTRL_MODE {
 		UGV_POSCTRL_MODE_AUTO,
@@ -156,9 +151,6 @@ private:
 		float throttle_cruise;
 		float throttle_slew_max;
 
-		float wheel_base;
-		float max_turn_angle;
-
 	} _parameters{};			/**< local copies of interesting parameters */
 
 	struct {
@@ -182,8 +174,6 @@ private:
 		param_t throttle_cruise;
 		param_t throttle_slew_max;
 
-		param_t wheel_base;
-		param_t max_turn_angle;
 	} _parameter_handles{};		/**< handles for interesting parameters */
 
 
@@ -195,7 +185,6 @@ private:
 	void		manual_control_setpoint_poll();
 	void		position_setpoint_triplet_poll();
 	void		vehicle_control_mode_poll();
-	void 		vehicle_attitude_poll();
 
 	/**
 	 * Control position.

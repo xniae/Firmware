@@ -42,7 +42,8 @@ px4_add_board(
 		dataman
 		ekf2
 		events
-		rover_pos_control
+		gnd_att_control
+		gnd_pos_control
 		land_detector
 		load_mon
 		logger
@@ -57,7 +58,6 @@ px4_add_board(
 		#dumpfile
 		#esc_calib
 		hardfault_log
-		i2cdetect
 		#led_control
 		mixer
 		#motor_ramp

@@ -80,9 +80,6 @@ private:
 	 */
 	void		advance_rtl();
 
-
-	float calculate_return_alt_from_cone_half_angle(float cone_half_angle_deg);
-
 	enum RTLState {
 		RTL_STATE_NONE = 0,
 		RTL_STATE_CLIMB,
@@ -94,7 +91,6 @@ private:
 		RTL_STATE_LANDED,
 	} _rtl_state{RTL_STATE_NONE};
 
-	float _rtl_alt{0.0f};	// AMSL altitude at which the vehicle should return to the home position
 	bool _rtl_alt_min{false};
 
 	DEFINE_PARAMETERS(
@@ -102,7 +98,6 @@ private:
 		(ParamFloat<px4::params::RTL_DESCEND_ALT>) _param_rtl_descend_alt,
 		(ParamFloat<px4::params::RTL_LAND_DELAY>) _param_rtl_land_delay,
 		(ParamFloat<px4::params::RTL_MIN_DIST>) _param_rtl_min_dist,
-		(ParamInt<px4::params::RTL_TYPE>) _param_rtl_type,
-		(ParamInt<px4::params::RTL_CONE_ANG>) _param_rtl_cone_half_angle_deg
+		(ParamInt<px4::params::RTL_TYPE>) _param_rtl_type
 	)
 };

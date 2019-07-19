@@ -33,6 +33,8 @@
 
 #include "ADIS16497.hpp"
 
+#include <px4_getopt.h>
+
 extern "C" { __EXPORT int adis16497_main(int argc, char *argv[]); }
 
 /**

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (c) 2019 PX4 Development Team. All rights reserved.
+ *   Copyright (C) 2019 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,77 +32,75 @@
  ****************************************************************************/
 
 /**
- * @file led.c
+ * @file armv7-m_dcache.cpp
  *
- * LED backend.
+ * Driver for the armv7 m_dcache.
+ *
  */
 
 #include <px4_config.h>
+#include <px4_log.h>
+#include <board_config.h>
+#include <stdint.h>
+#include <string.h>
 
-#include <stdbool.h>
+#include <parameters/param.h>
 
-#include "chip.h"
-#include "stm32_gpio.h"
-#include "board_config.h"
+#include "cache.h"
 
-#include <nuttx/board.h>
-#include <arch/board/board.h>
+#if defined(CONFIG_ARMV7M_DCACHE) && defined(CONFIG_ARMV7M_DCACHE_WRITETHROUGH)
 
-/*
- * Ideally we'd be able to get these from up_internal.h,
- * but since we want to be able to disable the NuttX use
- * of leds for system indication at will and there is no
- * separate switch, we need to build independent of the
- * CONFIG_ARCH_LEDS configuration switch.
- */
-__BEGIN_DECLS
-extern void led_init(void);
-extern void led_on(int led);
-extern void led_off(int led);
-extern void led_toggle(int led);
-__END_DECLS
+extern "C" __EXPORT int dcache_main(int argc, char *argv[]);
+extern "C" __EXPORT int board_get_dcache_setting();
 
-static uint32_t g_ledmap[] = {
-	GPIO_nLED_BLUE,                     // Indexed by LED_BLUE
-};
+/************************************************************************************
+ * Name: board_get_dcache_setting
+ *
+ * Description:
+ *  Called to retrieve the parameter setting to enable/disable
+ *  the dcache.
+ *
+ * Input Parameters:
+ *  None
+ *
+ * Returned Value:
+ *  -1 -  Not set - if Eratta exits turn dcache off else leave it on
+ *   0 -  if Eratta exits turn dcache off else leave it on
+ *   1 -  Force it off
+ *   2 -  Force it on
+ *
+ ************************************************************************************/
 
-__EXPORT void led_init(void)
+int board_get_dcache_setting()
 {
-	for (size_t l = 0; l < (sizeof(g_ledmap) / sizeof(g_ledmap[0])); l++) {
-		stm32_configgpio(g_ledmap[l]);
-	}
-}
+	param_t ph = param_find("SYS_FORCE_F7DC");
+	int32_t dcache_setting = -1;
 
-static void phy_set_led(int led, bool state)
-{
-	/* Drive Low to switch on */
-	if (led == 0) {
-		stm32_gpiowrite(g_ledmap[led], !state);
-	}
-}
-
-static bool phy_get_led(int led)
-{
-	/* If Low it is on */
-	if (led == 0) {
-		return !stm32_gpioread(g_ledmap[led]);
+	if (ph != PARAM_INVALID) {
+		param_get(ph, &dcache_setting);
 	}
 
-	return false;
+	return dcache_setting;
 }
 
-__EXPORT void led_on(int led)
+int dcache_main(int argc, char *argv[])
 {
-	phy_set_led(led, true);
-}
+	int action = -1;
+	char *pmesg = nullptr;
+	bool state = false;
 
-__EXPORT void led_off(int led)
-{
-	phy_set_led(led, false);
-}
+	if (argc > 1) {
+		if (!strcmp(argv[1], "on") || !strcmp(argv[1], "1")) {
+			action = 1;
+		}
 
-__EXPORT void led_toggle(int led)
-{
-	phy_set_led(led, !phy_get_led(led));
-}
+		if (!strcmp(argv[1], "off") || !strcmp(argv[1], "0")) {
+			action = 0;
+		}
+	}
 
+	board_dcache_info(action, &pmesg, &state);
+	PX4_INFO("M7 cpuid %s dcache %s", pmesg, state ? "On" : "Off");
+	return 0;
+}
+#endif

@@ -33,12 +33,9 @@
 
 #pragma once
 
-#include <drivers/device/i2c.h>
-#include <drivers/device/ringbuffer.h>
-#include <drivers/drv_device.h>
-#include <drivers/drv_mag.h>
-#include <lib/perf/perf_counter.h>
-#include <uORB/uORB.h>
+#include "drivers/device/ringbuffer.h"	// ringbuffer::RingBuffer
+#include "drivers/drv_mag.h"		// mag_calibration_s
+#include <perf/perf_counter.h>
 
 /* in 16-bit sampling mode the mag resolution is 1.5 milli Gauss per bit */
 

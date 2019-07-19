@@ -106,9 +106,7 @@ void
 PrecLand::on_active()
 {
 	// get new target measurement
-	_target_pose_updated = _target_pose_sub.update(&_target_pose);
-
-	if (_target_pose_updated) {
+	if (_target_pose_sub.update(&_target_pose)) {
 		_target_pose_valid = true;
 	}
 

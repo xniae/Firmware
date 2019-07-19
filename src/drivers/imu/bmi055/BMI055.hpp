@@ -33,10 +33,14 @@
 
 #pragma once
 
+#include <drivers/device/integrator.h>
 #include <drivers/device/spi.h>
-#include <ecl/geo/geo.h>
+#include <drivers/drv_hrt.h>
+#include <lib/conversion/rotation.h>
 #include <lib/perf/perf_counter.h>
-#include <px4_getopt.h>
+#include <px4_config.h>
+#include <systemlib/conversions.h>
+#include <systemlib/err.h>
 #include <px4_work_queue/ScheduledWorkItem.hpp>
 
 #define DIR_READ                0x80

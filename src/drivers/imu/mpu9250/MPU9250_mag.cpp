@@ -40,6 +40,12 @@
  *
  */
 
+#include <px4_config.h>
+#include <px4_log.h>
+#include <px4_time.h>
+#include <lib/perf/perf_counter.h>
+#include <drivers/drv_hrt.h>
+
 #include "MPU9250_mag.h"
 #include "mpu9250.h"
 

@@ -40,9 +40,9 @@
 
 using namespace matrix;
 
-bool FlightTaskAutoMapper::activate(vehicle_local_position_setpoint_s last_setpoint)
+bool FlightTaskAutoMapper::activate()
 {
-	bool ret = FlightTaskAuto::activate(last_setpoint);
+	bool ret = FlightTaskAuto::activate();
 	_reset();
 	return ret;
 }

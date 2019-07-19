@@ -395,11 +395,7 @@ do_load(const char *param_file_name)
 	}
 
 	if (result < 0) {
-		if (param_file_name) {
-			PX4_ERR("importing from '%s' failed (%i)", param_file_name, result);
-		} else {
-			PX4_ERR("importing failed (%i)", result);
-		}
+		PX4_ERR("importing from '%s' failed (%i)", param_file_name, result);
 		return 1;
 	}
 
@@ -425,11 +421,7 @@ do_import(const char *param_file_name)
 	}
 
 	if (result < 0) {
-		if (param_file_name) {
-			PX4_ERR("importing from '%s' failed (%i)", param_file_name, result);
-		} else {
-			PX4_ERR("importing failed (%i)", result);
-		}
+		PX4_ERR("importing from '%s' failed (%i)", param_file_name, result);
 		return 1;
 	}
 

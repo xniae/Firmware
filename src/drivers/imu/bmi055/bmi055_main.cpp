@@ -34,6 +34,9 @@
 #include "BMI055_accel.hpp"
 #include "BMI055_gyro.hpp"
 
+#include <px4_config.h>
+#include <px4_getopt.h>
+
 /** driver 'main' command */
 extern "C" { __EXPORT int bmi055_main(int argc, char *argv[]); }
 

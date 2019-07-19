@@ -37,7 +37,9 @@
  * I2C interface for MPU9250
  */
 
+#include <px4_config.h>
 #include <drivers/device/i2c.h>
+#include <drivers/drv_device.h>
 
 #include "mpu9250.h"
 

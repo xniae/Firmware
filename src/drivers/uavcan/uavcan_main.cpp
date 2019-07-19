@@ -425,12 +425,6 @@ void UavcanNode::update_params()
 	if (param_handle != PARAM_INVALID) {
 		param_get(param_handle, &_airmode);
 	}
-
-	param_handle = param_find("THR_MDL_FAC");
-
-	if (param_handle != PARAM_INVALID) {
-		param_get(param_handle, &_thr_mdl_factor);
-	}
 }
 
 int UavcanNode::start_fw_server()
@@ -911,7 +905,6 @@ int UavcanNode::run()
 				// but this driver could well serve multiple groups.
 				unsigned num_outputs_max = 8;
 
-				_mixers->set_thrust_factor(_thr_mdl_factor);
 				_mixers->set_airmode(_airmode);
 
 				// Do mixing

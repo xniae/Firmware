@@ -154,8 +154,7 @@ PARAM_DEFINE_INT32(CBRK_GPSFAIL, 0);
  *
  * Setting this parameter to 782097 will disable the buzzer audio notification.
  *
- * Setting this parameter to 782090 will disable the startup tune, while keeping
- * all others enabled.
+ * WARNING: ENABLING THIS CIRCUIT BREAKER IS AT OWN RISK
  *
  * @reboot_required true
  * @min 0

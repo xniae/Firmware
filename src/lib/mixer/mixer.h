@@ -128,7 +128,6 @@
 #pragma once
 
 #include <stdint.h>
-#include <lib/mathlib/mathlib.h>
 
 /** simple channel scaler */
 struct mixer_scaler_s {
@@ -708,10 +707,7 @@ public:
 	 *
 	 * @param[in]  val   The value
 	 */
-	void			set_thrust_factor(float val) override
-	{
-		_thrust_factor = math::constrain(val, 0.0f, 1.0f);
-	}
+	void			set_thrust_factor(float val) override { _thrust_factor = val; }
 
 	void 			set_airmode(Airmode airmode) override;
 

@@ -32,12 +32,18 @@
  ****************************************************************************/
 
 /**
- * Blacksheep telemetry Enable
+ * Force F7 D cache on and disregard errata 1259864 data corruption in
+ * a sequence of write-through stores and loads on ARM M7 silicon
+ * Fault Status: Present in r0p1, r0p2, r1p0 and r1p1. Fixed in r1p2
  *
- * If true, the FMU will try to connect to Blacksheep telemetry on start up
  *
- * @boolean
- * @reboot_required true
- * @group Telemetry
+ * @min 0
+ * @max 2
+ * @value 0 if Eratta exits turn dcache off else leave it on
+ * @value 1 Force it off
+ * @value 2 Force it on
+ * @group Chip
+ * @category Developer
+
  */
-PARAM_DEFINE_INT32(TEL_BST_EN, 0);
+PARAM_DEFINE_INT32(SYS_FORCE_F7DC, 0);

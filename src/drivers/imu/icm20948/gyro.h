@@ -33,10 +33,6 @@
 
 #pragma once
 
-#include <drivers/device/device.h>
-#include <drivers/drv_gyro.h>
-#include <uORB/uORB.h>
-
 class ICM20948;
 
 /**

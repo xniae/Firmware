@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+# @name NUAA Circulation control
+#
+# @type Flying Wing
+# @class Plane
+#
+# @output MAIN1 left aileron
+# @output MAIN2 right aileron
+# @output MAIN4 throttle
+#
+# @output AUX1 feed-through of RC AUX1 channel
+# @output AUX2 feed-through of RC AUX2 channel
+# @output AUX3 feed-through of RC AUX3 channel
+#
+# @maintainer Lorenz Meier <lorenz@px4.io>
+#
+
+sh /etc/init.d/rc.fw_defaults
+
+if [ $AUTOCNF = yes ]
+then
+	param set PWM_MIN 900
+	param set PWM_MAX 2100
+	param set PWM_AUX_RATE 50
+fi
+
+set MIXER NUAA_Circulation
+set PWM_OUT 1234
+
+set MIXER_AUX NUAA_Circulation
+set PWM_AUX_OUT 123456

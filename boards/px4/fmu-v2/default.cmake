@@ -12,6 +12,7 @@ px4_add_board(
 	#TESTING
 	#CONSTRAINED_FLASH
 	#UAVCAN_INTERFACES 2
+	modules/air_probe_uart
 
 	SERIAL_PORTS
 		GPS1:/dev/ttyS3
@@ -64,6 +65,7 @@ px4_add_board(
 		#uavcan
 
 	MODULES
+		#air_probe_uart
 		#attitude_estimator_q
 		camera_feedback
 		commander
@@ -125,3 +127,5 @@ px4_add_board(
 		#segway
 		#uuv_example_app
 	)
+
+

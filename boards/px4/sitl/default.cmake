@@ -5,6 +5,7 @@ px4_add_board(
 	MODEL sitl
 	LABEL default
 	TESTING
+	modules/air_probe_uart
 
 	DRIVERS
 		#barometer # all available barometer drivers

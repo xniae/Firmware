@@ -39,5 +39,5 @@ px4_add_module(
 	SRCS
     		air_probe_uart.c
 	DEPENDS
-        	platforms__common
+        	#platforms__common
 	)

@@ -12,7 +12,6 @@ px4_add_board(
 	IO px4_io-v2_default
 	TESTING
 	UAVCAN_INTERFACES 2
-	modules/air_probe_uart
 
 	SERIAL_PORTS
 		GPS1:/dev/ttyS3
@@ -89,6 +88,7 @@ px4_add_board(
 		vmount
 		vtol_att_control
 		wind_estimator
+		air_probe_uart
 
 	SYSTEMCMDS
 		bl_update

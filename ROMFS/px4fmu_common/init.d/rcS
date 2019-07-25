@@ -484,6 +484,11 @@ else
 	fi
 
 	#
+	# Start air probe on UART
+	#
+	air_probe_uart start
+
+	#
 	# Start the logger.
 	#
 	sh /etc/init.d/rc.logging

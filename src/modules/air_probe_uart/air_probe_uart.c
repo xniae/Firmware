@@ -219,10 +219,29 @@ int air_probe_uart_thread_main(int argc, char *argv[])
     orb_advert_t air_probe_uart_pub = orb_advertise(ORB_ID(air_probe_uart), &probedata);//公告主题
     warnx("[daemon] starting\n");
 
+    float test_as1 = 0.0;
+    float test_as2 = 0.0;
+    float test_as3 = 0.0;
+    float test_as4 = 0.0;
+    float test_as5 = 0.0;
+    float test_as6 = 0.0;
+    float test_as7 = 0.0;
+    float test_dp1 = 0.0;
+    float test_dp2 = 0.0;
+    float test_dp3 = 0.0;
+    float test_dp4 = 0.0;
+    float test_dp5 = 0.0;
+    float test_dp6 = 0.0;
+    float test_dp7 = 0.0;
 	float alpha = 0.0;
 	float beta = 0.0;
 	float airspeed = 0.0;
-    float testflap = 0.0;
+    float total_pressure = 0.0;
+    float static_pressure = 0.0;
+    char ap_checkerr_read = 0;
+    char ap_checkerr_cal = 0;
+    char ap_checkerr_cmp = 0;
+
 
     while(true)
 	{
@@ -243,20 +262,57 @@ int air_probe_uart_thread_main(int argc, char *argv[])
 					flag=0;
 				}
 			}
-			/*
-			char aa[4]={buffer[29],buffer[30],buffer[31],buffer[32]};
-			float pf = *(float*)&aa;*/
 
+            char t_as1[4]={buffer[1],buffer[2],buffer[3],buffer[4]};
+            char t_as2[4]={buffer[5],buffer[6],buffer[7],buffer[8]};
+            char t_as3[4]={buffer[9],buffer[10],buffer[11],buffer[12]};
+            char t_as4[4]={buffer[13],buffer[14],buffer[15],buffer[16]};
+            char t_as5[4]={buffer[17],buffer[18],buffer[19],buffer[20]};
+            char t_as6[4]={buffer[21],buffer[22],buffer[23],buffer[24]};
+            char t_as7[4]={buffer[25],buffer[26],buffer[27],buffer[28]};
+            char t_dp1[4]={buffer[29],buffer[30],buffer[31],buffer[32]};
+            char t_dp2[4]={buffer[33],buffer[34],buffer[35],buffer[36]};
+            char t_dp3[4]={buffer[37],buffer[38],buffer[39],buffer[40]};
+            char t_dp4[4]={buffer[41],buffer[42],buffer[43],buffer[44]};
+            char t_dp5[4]={buffer[45],buffer[46],buffer[47],buffer[48]};
+            char t_dp6[4]={buffer[49],buffer[50],buffer[51],buffer[52]};
+            char t_dp7[4]={buffer[53],buffer[54],buffer[55],buffer[56]};
 			char aoa[4]={buffer[57],buffer[58],buffer[59],buffer[60]};
 			char aos[4]={buffer[61],buffer[62],buffer[63],buffer[64]};
 			char as[4]={buffer[65],buffer[66],buffer[67],buffer[68]};
-            char tf[4]={buffer[29],buffer[30],buffer[31],buffer[32]};
+            char tp[4]={buffer[69],buffer[70],buffer[71],buffer[72]};
+            char sp[4]={buffer[73],buffer[74],buffer[75],buffer[76]};
+            ap_checkerr_read=buffer[77];
 
+			memcpy(&test_as1,t_as1,sizeof(float));
+			memcpy(&test_as2,t_as2,sizeof(float));
+			memcpy(&test_as3,t_as3,sizeof(float));
+            memcpy(&test_as4,t_as4,sizeof(float));
+			memcpy(&test_as5,t_as5,sizeof(float));
+			memcpy(&test_as6,t_as6,sizeof(float));
+			memcpy(&test_as7,t_as7,sizeof(float));
+            memcpy(&test_dp1,t_dp1,sizeof(float));
+			memcpy(&test_dp2,t_dp2,sizeof(float));
+			memcpy(&test_dp3,t_dp3,sizeof(float));
+            memcpy(&test_dp4,t_dp4,sizeof(float));
+			memcpy(&test_dp5,t_dp5,sizeof(float));
+			memcpy(&test_dp6,t_dp6,sizeof(float));
+            memcpy(&test_dp7,t_dp7,sizeof(float));
 			memcpy(&alpha,aoa,sizeof(float));
-			memcpy(&beta,aos,sizeof(float));
+            memcpy(&beta,aos,sizeof(float));
 			memcpy(&airspeed,as,sizeof(float));
-            memcpy(&testflap,tf,sizeof(float));
+            memcpy(&total_pressure,tp,sizeof(float));
+            memcpy(&static_pressure,sp,sizeof(float));
 
+            ap_checkerr_cal = test_as1 + test_as2 + test_as3 + test_as4 + test_as5 + test_as6 + test_as7 +
+                test_dp1 + test_dp2 + test_dp3 + test_dp4 + test_dp5 + test_dp6 + test_dp7 + alpha + beta +
+                airspeed + total_pressure + static_pressure;
+
+            if(ap_checkerr_cal == ap_checkerr_read){
+                ap_checkerr_cmp = 1;
+            }else{
+                ap_checkerr_cmp = 0;
+            }
 
             uint64_t timestamp = hrt_absolute_time();
 
@@ -264,7 +320,26 @@ int air_probe_uart_thread_main(int argc, char *argv[])
             probedata.probe_alpha=alpha;
 			probedata.probe_beta=beta;
 			probedata.probe_airspeed=airspeed;
-            probedata.probe_testflap=testflap;
+            probedata.probe_as1=test_as1;
+            probedata.probe_as2=test_as2;
+            probedata.probe_as3=test_as3;
+            probedata.probe_as4=test_as4;
+            probedata.probe_as5=test_as5;
+            probedata.probe_as6=test_as6;
+            probedata.probe_as7=test_as7;
+            probedata.probe_dp1=test_dp1;
+            probedata.probe_dp2=test_dp2;
+            probedata.probe_dp3=test_dp3;
+            probedata.probe_dp4=test_dp4;
+            probedata.probe_dp5=test_dp5;
+            probedata.probe_dp6=test_dp6;
+            probedata.probe_dp7=test_dp7;
+            probedata.probe_total_pressure=total_pressure;
+            probedata.probe_static_pressure=static_pressure;
+            probedata.probe_checkerr_read=ap_checkerr_read;
+            probedata.probe_checkerr_cal=ap_checkerr_cal;
+            probedata.probe_checkerr_cmp=ap_checkerr_cmp;
+
 
 			orb_publish(ORB_ID(air_probe_uart), air_probe_uart_pub, &probedata);
 

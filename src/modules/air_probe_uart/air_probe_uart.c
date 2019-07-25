@@ -202,7 +202,7 @@ int air_probe_uart_thread_main(int argc, char *argv[])
      * N/A    : /dev/ttyS4
      * IO DEBUG (RX only):/dev/ttyS0
      */
-    char uart_read = uart_init("/dev/ttyS6");
+    char uart_read = uart_init("/dev/ttyS2");
     if(false == uart_read)
         return -1;
     if(false == set_uart_baudrate(uart_read,115200))
@@ -222,6 +222,7 @@ int air_probe_uart_thread_main(int argc, char *argv[])
 	float alpha = 0.0;
 	float beta = 0.0;
 	float airspeed = 0.0;
+    float testflap = 0.0;
 
     while(true)
 	{
@@ -249,20 +250,34 @@ int air_probe_uart_thread_main(int argc, char *argv[])
 			char aoa[4]={buffer[57],buffer[58],buffer[59],buffer[60]};
 			char aos[4]={buffer[61],buffer[62],buffer[63],buffer[64]};
 			char as[4]={buffer[65],buffer[66],buffer[67],buffer[68]};
+            char tf[4]={buffer[1],buffer[2],buffer[3],buffer[4]};
 
 			memcpy(&alpha,aoa,sizeof(float));
 			memcpy(&beta,aos,sizeof(float));
 			memcpy(&airspeed,as,sizeof(float));
+            memcpy(&testflap,tf,sizeof(float));
 
-			probedata.probe_alpha=alpha;
+
+            uint64_t timestamp = hrt_absolute_time();
+
+            /* probedata.timestamp = timestamp;
+            probedata.probe_alpha=alpha;
 			probedata.probe_beta=beta;
 			probedata.probe_airspeed=airspeed;
+            probedata.probe_testflap=testflap;*/
+
+            probedata.timestamp = timestamp;
+            probedata.probe_alpha=6.0;
+			probedata.probe_beta=7.0;
+			probedata.probe_airspeed=8.0;
+            probedata.probe_testflap=9.0;
+
 			orb_publish(ORB_ID(air_probe_uart), air_probe_uart_pub, &probedata);
 
 		}
 	}
 
-    warnx("[YCM]exiting");
+    warnx("[YCM]exiting")//;
     thread_running = false;
     close(uart_read);
 

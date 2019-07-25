@@ -50,6 +50,7 @@
 #include <uORB/topics/parameter_update.h>
 #include <uORB/topics/vehicle_status.h>
 #include <uORB/topics/vehicle_command_ack.h>
+#include <uORB/topics/air_probe_uart.h>
 
 #include <drivers/drv_hrt.h>
 #include <px4_getopt.h>
@@ -618,6 +619,7 @@ void Logger::add_default_topics()
 	add_topic("actuator_controls_1", 100);
 	add_topic("actuator_outputs", 100);
 	add_topic("airspeed", 200);
+	add_topic("air_probe_uart",100);
 	add_topic("battery_status", 500);
 	add_topic("camera_capture");
 	add_topic("camera_trigger");
@@ -680,6 +682,7 @@ void Logger::add_high_rate_topics()
 	// maximum rate to analyze fast maneuvers (e.g. for racing)
 	add_topic("actuator_controls_0");
 	add_topic("actuator_outputs");
+	add_topic("air_probe_uart");
 	add_topic("manual_control_setpoint");
 	add_topic("rate_ctrl_status");
 	add_topic("sensor_combined");

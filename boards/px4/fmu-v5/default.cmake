@@ -10,6 +10,7 @@ px4_add_board(
 	IO px4_io-v2_default
 	TESTING
 	UAVCAN_INTERFACES 2
+	modules/air_probe_uart
 
 	SERIAL_PORTS
 		GPS1:/dev/ttyS0

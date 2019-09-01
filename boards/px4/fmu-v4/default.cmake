@@ -9,6 +9,7 @@ px4_add_board(
 	ROMFSROOT px4fmu_common
 	TESTING
 	UAVCAN_INTERFACES 1
+	modules/air_probe_uart
 
 	SERIAL_PORTS
 		GPS1:/dev/ttyS3

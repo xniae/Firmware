@@ -130,7 +130,6 @@ __BEGIN_DECLS
 
 /* RC input */
 
-#define RC_UXART_BASE           KINETIS_UART1_BASE
 #define RC_SERIAL_PORT          "/dev/ttyS2"      /* UART1 */
 #define GPIO_RSSI_IN            PIN_ADC1_SE13
 
@@ -188,7 +187,7 @@ __BEGIN_DECLS
  */
 #define SD_CAED_P_EN       (GPIO_LOWDRIVE | GPIO_OUTPUT_ONE  | PIN_PORTD | PIN6)
 
-#define GPIO_SD_CARDDETECT (GPIO_PULLUP | PIN_INT_BOTH | PIN_PORTD | PIN10)
+//#define GPIO_SD_CARDDETECT (GPIO_PULLUP | PIN_INT_BOTH | PIN_PORTD | PIN10)
 
 /* SPI
  *
@@ -520,6 +519,8 @@ __BEGIN_DECLS
 #endif /* HAVE_AUTOMOUNTER */
 
 #define BOARD_HAS_NOISY_FXOS8700_MAG 1 // Disable internal MAG
+
+#define BOARD_NUM_IO_TIMERS 3
 
 /************************************************************************************
  * Public data

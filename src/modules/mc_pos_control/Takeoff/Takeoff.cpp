@@ -45,9 +45,9 @@ void Takeoff::generateInitialRampValue(const float hover_thrust, float velocity_
 }
 
 void Takeoff::updateTakeoffState(const bool armed, const bool landed, const bool want_takeoff,
-				 const float takeoff_desired_vz, const bool skip_takeoff)
+				 const float takeoff_desired_vz, const bool skip_takeoff, const hrt_abstime &now_us)
 {
-	_spoolup_time_hysteresis.set_state_and_update(armed);
+	_spoolup_time_hysteresis.set_state_and_update(armed, now_us);
 
 	switch (_takeoff_state) {
 	case TakeoffState::disarmed:
@@ -58,6 +58,7 @@ void Takeoff::updateTakeoffState(const bool armed, const bool landed, const bool
 			break;
 		}
 
+	// FALLTHROUGH
 	case TakeoffState::spoolup:
 		if (_spoolup_time_hysteresis.get_state()) {
 			_takeoff_state = TakeoffState::ready_for_takeoff;
@@ -66,6 +67,7 @@ void Takeoff::updateTakeoffState(const bool armed, const bool landed, const bool
 			break;
 		}
 
+	// FALLTHROUGH
 	case TakeoffState::ready_for_takeoff:
 		if (want_takeoff) {
 			_takeoff_state = TakeoffState::rampup;
@@ -75,6 +77,7 @@ void Takeoff::updateTakeoffState(const bool armed, const bool landed, const bool
 			break;
 		}
 
+	// FALLTHROUGH
 	case TakeoffState::rampup:
 		if (_takeoff_ramp_vz >= takeoff_desired_vz) {
 			_takeoff_state = TakeoffState::flight;
@@ -83,6 +86,7 @@ void Takeoff::updateTakeoffState(const bool armed, const bool landed, const bool
 			break;
 		}
 
+	// FALLTHROUGH
 	case TakeoffState::flight:
 		if (landed) {
 			_takeoff_state = TakeoffState::ready_for_takeoff;

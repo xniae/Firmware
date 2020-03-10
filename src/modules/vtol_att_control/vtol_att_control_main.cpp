@@ -48,13 +48,7 @@
  */
 #include "vtol_att_control_main.h"
 #include <systemlib/mavlink_log.h>
-<<<<<<< HEAD
-#include <matrix/matrix/math.hpp>
-
-using namespace matrix;
-=======
 #include <uORB/PublicationQueued.hpp>
->>>>>>> v1.10.1
 
 using namespace matrix;
 

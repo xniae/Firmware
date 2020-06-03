@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+# @name NUAA BLI BWB
+#
+# @type Standard Plane
+# @class Plane
+#
+# @output MAIN1 aileronL1
+# @output MAIN2 aileronL2
+# @output MAIN3 aileronL3
+# @output MAIN4 aileronR1
+# @output MAIN5 aileronR2
+# @output MAIN6 aileronR3
+# @output MAIN7 EDFL
+# @output MAIN8 EDFR
+#
+# @output AUX1 Elevator
+# @output AUX2 RudderL
+# @output AUX3 RudderR
+#
+# @maintainer Lorenz Meier <lorenz@px4.io>
+#
+
+sh /etc/init.d/rc.fw_defaults
+
+if [ $AUTOCNF = yes ]
+then
+	param set PWM_AUX_RATE 50
+	param set PWM_RATE 50
+fi
+
+set MIXER NUAA_BWB
+set MIXER_AUX NUAA_BWB
+
+# Rate must be set by group (see pwm info).
+# Throttle is in the same group as servos.
+
+# use PWM parameters for throttle channel
+set PWM_OUT 78

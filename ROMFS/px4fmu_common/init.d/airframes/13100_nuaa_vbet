@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+# @name NUAA V-Bet
+#
+# @type VTOL Duo Tailsitter
+# @class VTOL
+#
+# @output MAIN1 servo front
+# @output MAIN2 servo back
+# @output MAIN3 servo left
+# @output MAIN4 servo right
+# @output MAIN5 motor up
+# @output MAIN6 motor down
+#
+# @maintainer Qiochang Chen <bluecat1997@sina.cn>
+#
+
+sh /etc/init.d/rc.vtol_defaults
+
+if [ $AUTOCNF = yes ]
+then
+	param set MAV_TYPE 19
+
+	param set VT_IDLE_PWM_MC  1080
+	param set VT_ELEV_MC_LOCK 1
+	param set VT_MOT_ID 56
+	param set VT_TYPE 0
+fi
+
+set MAV_TYPE 19
+
+set MIXER nuaa_vbet
+
+set PWM_OUT 123456
